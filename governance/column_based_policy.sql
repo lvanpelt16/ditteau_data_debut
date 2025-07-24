@@ -1,0 +1,27 @@
+USE ROLE GOVERNANCE_ADMIN;
+USE DATABASE DITTEAU_DATA;
+USE SCHEMA GOVERNANCE;
+
+-- Masking Policy for SSN (Most sensitive)
+CREATE OR REPLACE MASKING POLICY GOVERNANCE.SSN_MASKING_POLICY AS (val VARCHAR) RETURNS VARCHAR ->
+    CASE
+        WHEN CURRENT_ROLE() IN ('IR_ANALYST', 'DITTEAU_DATA_ADMIN') THEN val
+        WHEN CURRENT_ROLE() = 'DATA_ANALYST' THEN 'XXX-XX-XXXX' -- Fully mask for general analysts
+        ELSE '***-**-****' -- Default mask for everyone else
+    END;
+
+-- Masking Policy for Email/Phone (Less sensitive, but still PII)
+CREATE OR REPLACE MASKING POLICY GOVERNANCE.PII_MASKING_POLICY AS (val VARCHAR) RETURNS VARCHAR ->
+    CASE
+        WHEN CURRENT_ROLE() IN ('IR_ANALYST', 'DITTEAU_DATA_ADMIN') THEN val
+        WHEN CURRENT_ROLE() = 'DATA_ANALYST' THEN LEFT(val, 3) || '****' || SUBSTRING(val, LENGTH(val) - 4, 5) -- Partial mask
+        ELSE '****'
+    END;
+
+-- Masking Policy for Address (Another PII field)
+CREATE OR REPLACE MASKING POLICY GOVERNANCE.ADDRESS_MASKING_POLICY AS (val VARCHAR) RETURNS VARCHAR ->
+    CASE
+        WHEN CURRENT_ROLE() IN ('IR_ANALYST', 'DITTEAU_DATA_ADMIN') THEN val
+        WHEN CURRENT_ROLE() = 'DATA_ANALYST' THEN '*** HIDDEN ADDRESS ***'
+        ELSE '***'
+    END;
