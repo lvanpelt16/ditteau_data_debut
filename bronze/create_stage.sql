@@ -5,7 +5,7 @@ USE SCHEMA BRONZE;
 CREATE OR REPLACE STAGE RAW_POWERFAIDS_STAGE
   FILE_FORMAT = (TYPE = CSV
                    FIELD_DELIMITER = ','
-                   SKIP_HEADER = 1 -- Skip the first row which contains headers
+                   SKIP_HEADER = 0
                    FIELD_OPTIONALLY_ENCLOSED_BY = '"' -- for text fields with commas
                    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE -- lenient for POC data
                    NULL_IF = ('', 'NULL', 'null') -- common null representations
