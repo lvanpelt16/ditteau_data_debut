@@ -239,15 +239,15 @@ INSERT INTO DITTEAU_DATA.GOLD.DIM_TERM (
     CREATION_TIMESTAMP
 )
 SELECT
-    trim(a.sess)|| trim(nvl(a.subsess,'-')) || a.yr || trim(a.prog),
-    'TBD',
+    trim(a.sess)|| trim(replace(a.subsess,' ','-')) || a.yr || trim(a.prog),
+    'Session: ' || trim(a.sess) || ' Year: ' || a.yr || ' Subsession: ' || trim(replace(a.subsess,' ','-')) || ' Program:  ' || trim(a.prog),
     a.acyr,
     a.sess,
     a.yr,
     a.subsess,
     a.prog,
-    award,
-    fiscal,
+    a.acyr,
+    a.acyr,
     a.beg_date,
     a.end_date,
     a.beg_date,
