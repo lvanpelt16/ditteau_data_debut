@@ -416,6 +416,7 @@ CREATE OR REPLACE TABLE DITTEAU_DATA.GOLD.DIM_COURSE_SECTION (
     COURSE_TITLE VARCHAR,
     SECTION_TITLE VARCHAR,
     COURSE_SECTION_CATALOG VARCHAR,
+    COURSE_SECTION_DEPT VARCHAR,
     COURSE_SECTION_SESS VARCHAR,
     COURSE_SECTION_YEAR INT,
     COURSE_SECTION_SUBSESS VARCHAR,
@@ -435,6 +436,7 @@ INSERT INTO DITTEAU_DATA.GOLD.DIM_COURSE_SECTION (
     COURSE_TITLE,
     SECTION_TITLE,
     COURSE_SECTION_CATALOG,
+    COURSE_SECTION_DEPT,
     COURSE_SECTION_SESS,
     COURSE_SECTION_YEAR,
     COURSE_SECTION_SUBSESS,
@@ -453,6 +455,7 @@ SELECT
     a.title1 || ' ' || a.title2 || ' ' || a.title3,
     b.title,
     b.cat,
+    d.dept_key,
     b.sess,
     b.yr,
     b.subsess,
@@ -466,9 +469,11 @@ SELECT
     CURRENT_TIMESTAMP()
 FROM DITTEAU_DATA.SILVER.SILVER_CX_CRS_REC a,
      DITTEAU_DATA.SILVER.SILVER_CX_SEC_REC b,
-     DITTEAU_DATA.GOLD.DIM_FACULTY c
+     DITTEAU_DATA.GOLD.DIM_FACULTY c,
+     DITTEAU_DATA.GOLD.DIM_DEPT d
 
 WHERE a.crs_no = b.crs_no and
       a.cat = b.cat and
-      b.fac_id = c.faculty_code
+      b.fac_id = c.faculty_code and
+      a.dept = d.dept_code
      ;    
