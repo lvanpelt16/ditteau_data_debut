@@ -1,3 +1,50 @@
+--RDT's sample query
+SELECT
+    T.TERM_ACAD_YR AS academic_year,
+    D.DEPT_DESCR AS department,
+    M.MAJOR_DESCR AS major,
+    -- Extracts the first digit of the course number to determine the level (e.g., 1 for 100-level, 2 for 200-level)
+    substring(C.COURSE_SECTION_COURSE_NUMBER, 4,1) || '00' AS course_level,
+    -- Calculates the average grade points. We only consider grades with points to exclude non-graded entries.
+    AVG(G.GRADE_PTS) AS average_grade_points
+FROM
+    DITTEAU_DATA.GOLD.FACT_ENROLLMENT AS E
+JOIN
+    DITTEAU_DATA.GOLD.DIM_FACULTY AS F ON E.ENROLLMENT_FACULTY_KEY = F.FACULTY_KEY
+JOIN
+    DITTEAU_DATA.GOLD.DIM_GRADE AS G ON E.ENROLLMENT_GRADE_KEY = G.GRADE_KEY
+JOIN
+    DITTEAU_DATA.GOLD.DIM_TERM AS T ON E.ENROLLMENT_TERM_KEY = T.TERM_KEY
+JOIN
+    DITTEAU_DATA.GOLD.DIM_STUDENT AS S ON E.ENROLLMENT_STU_KEY = S.STUDENT_KEY
+JOIN
+    DITTEAU_DATA.GOLD.DIM_MAJOR AS M ON S.STUDENT_MAJOR = M.MAJOR_KEY
+JOIN
+    DITTEAU_DATA.GOLD.DIM_COURSE_SECTION AS C ON E.ENROLLMENT_COURSE_SECTION_KEY = C.COURSE_SECTION_KEY
+JOIN
+    DITTEAU_DATA.GOLD.DIM_DEPT AS D ON F.FACULTY_DEPT = D.DEPT_KEY
+WHERE
+G.GRADE_PTS IS NOT NULL
+GROUP BY
+    department,
+    academic_year,
+    major,
+    course_level
+ORDER BY
+    department,
+    academic_year,
+    course_level,
+    major;
+
+--Query #2 from silver transactional data
+SELECT 
+from_acad_cal_rec,
+     dept_table,
+     major_table,
+     grade_table
+     prog_enr_rec,
+     cw_rec,
+     
 SELECT
     T.TERM_ACAD_YR AS academic_year,
     F.FACULTY_FIRSTNAME || ' ' || F.FACULTY_LASTNAME AS faculty_name,
