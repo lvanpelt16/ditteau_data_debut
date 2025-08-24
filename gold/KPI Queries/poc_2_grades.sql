@@ -42,14 +42,11 @@ SELECT
     A.ACYR AS academic_year,
     D.TXT AS department,
     M.TXT AS major, 
-    SUBSTRING(C.CRS_NO, 4, 1) || '00' AS course_level, 
+    SUBSTRING(CW.CRS_NO, 4, 1) || '00' AS course_level, 
     SUM(G.PTS * CW.HRS) / NULLIF(SUM(CW.HRS), 0) AS average_grade_points
 FROM
     DITTEAU_DATA.SILVER.SILVER_CX_CW_REC CW
-JOIN
-    DITTEAU_DATA.SILVER.SILVER_CX_CRS_REC C 
-        ON CW.CRS_NO = C.CRS_NO 
-       AND CW.CAT = C.CAT
+
 JOIN
     DITTEAU_DATA.SILVER.SILVER_CX_SEC_REC S
         ON CW.CRS_NO = S.CRS_NO 
@@ -87,7 +84,7 @@ GROUP BY
     D.TXT,
     A.ACYR,
     M.TXT,
-    SUBSTRING(C.CRS_NO, 4, 1) || '00'
+    SUBSTRING(CW.CRS_NO, 4, 1) || '00'
 ORDER BY
     department,
     academic_year,
